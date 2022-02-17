@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">appChat</string>
+    <string name="logo">Chat-Chat</string>
+    <string name="hint_user_chat">Пока тут пусто, напишите что-нибудь!</string>
+    <string name="button_text_send">Отправить</string>
+    <string name="field_to_enter_message_hint">Введите сообщение</string>
+    <string name="send_empty_message_error">Пустое сообщение</string>
+    <string name="connection_closed">Соединение разорвано</string>
+    <string name="connection_established">Соединение установлено</string>
+    <string name="connection_not_established">Соединение не установлено</string>
+</resources>
