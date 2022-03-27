@@ -7,6 +7,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import static com.example.client.packet.KeyManagerDH.StringToKey;
+
 public class PacketMessage extends OPacket{
 
     private String sender;
@@ -28,6 +30,7 @@ public class PacketMessage extends OPacket{
 
     @Override
     public void write(DataOutputStream dos) throws IOException {
+        message = KeyManagerDH.encryptGost(message, StringToKey(ClientLoader.getSessionKey()));
         dos.writeUTF(message);
     }
 
@@ -35,6 +38,8 @@ public class PacketMessage extends OPacket{
     public void read(DataInputStream dis) throws IOException {
         sender = dis.readUTF();
         message = dis.readUTF();
+        sender = KeyManagerDH.decryptGost(sender, StringToKey(ClientLoader.getSessionKey()));
+        message = KeyManagerDH.decryptGost(message, StringToKey(ClientLoader.getSessionKey()));
     }
 
     @Override

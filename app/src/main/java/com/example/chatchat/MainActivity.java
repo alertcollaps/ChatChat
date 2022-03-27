@@ -1,5 +1,6 @@
 package com.example.chatchat;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,7 +30,11 @@ public class MainActivity extends AppCompatActivity {
         send_mess = findViewById(R.id.send_mess);
         mainActivity = MainActivity.this;
 
-        new ClientLoader(mainActivity).start();
+        ClientLoader.setmA(mainActivity);
+
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+
 
 
         button_send.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +61,4 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(mainActivity, message, Toast.LENGTH_SHORT).show();
     }
 
-    public static EditText getEditText(){
-        return user_chat;
-    }
 }

@@ -4,16 +4,16 @@ package com.example.client;
 import android.os.Build;
 import android.widget.EditText;
 import androidx.annotation.RequiresApi;
+import com.example.chatchat.LoginActivity;
 import com.example.chatchat.MainActivity;
-import com.example.client.packet.OPacket;
-import com.example.client.packet.PacketAuthorize;
-import com.example.client.packet.PacketManager;
-import com.example.client.packet.PacketMessage;
+import com.example.client.packet.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.security.KeyPair;
 
 
 public class ClientLoader extends Thread  {
@@ -23,34 +23,167 @@ public class ClientLoader extends Thread  {
     private static String nickname = "default";
     private static boolean sentNickname = false;
     private static MainActivity mA;
+    private static String pubKey = "";
+    private static String sessionKey = "";
 
     public ClientLoader(){
 
+    }
+
+    public static void setNickname(String nickname) {
+        ClientLoader.nickname = nickname;
+    }
+
+    public static String getNickname() {
+        return nickname;
     }
 
     public ClientLoader(MainActivity mA){
         ClientLoader.mA = mA;
     }
 
+    public static void setPubKey(String pubKey) {
+        ClientLoader.pubKey = pubKey;
+    }
+
+    public static String getSessionKey() {
+        return sessionKey;
+    }
+
+    public static String getPubKey() {
+        return pubKey;
+    }
+
     public static MainActivity getMainActivity(){
         return mA;
     }
 
-    public void run() {
-        connect();
-        handle();
+    public static void setmA(MainActivity mA) {
+        ClientLoader.mA = mA;
     }
 
-    private static void connect(){
-        try { socket = new Socket(host, port);
-            //MainActivity.poppupWindow(R.string.connection_established);
+    public static void setSessionKey(String sessionKey) {
+        ClientLoader.sessionKey = sessionKey;
+    }
+
+    public void run() {
+        try {
+            connect();
+            LoginActivity.connectSuccess = true;
         } catch (IOException e) {
-            //MainActivity.poppupWindow(R.string.connection_not_established);
-            e.printStackTrace();
+            LoginActivity.connectSuccess = false;
+            return;
+        }
+        try {
+            keyHandler();
+            LoginActivity.keySuccess = true;
+        } catch (EOFException e) {
+            LoginActivity.keySuccess = false;
         }
     }
 
-    private static void handle(){
+    public static void connect() throws IOException {
+        socket = new Socket(host, port);
+
+    }
+
+    public static void keyHandler() throws EOFException {
+        Thread handleKey = new Thread(){
+            @Override
+            public void run(){
+                while(true){
+                    try{
+                        DataInputStream dis = new DataInputStream(socket.getInputStream());
+                        if (dis.available() <= 0){
+                            ClientLoader.sleep();
+                            continue;
+                        }
+                        short id = dis.readShort();
+                        if (id != 3){
+                            continue;
+                        }
+                        OPacket packet = PacketManager.getPacket(id);
+                        packet.read(dis);
+                        packet.handle();
+                        break;
+                    }catch (IOException ex){
+                        ex.printStackTrace();
+                    }
+
+                }
+            }
+        };
+        handleKey.start();
+        String pub = pubKey;
+
+        KeyManagerDH.generateKeyPair();
+        sendPacket(new PacketKeys());
+
+        for (int i = 0; i < 10; i++){
+            if (pub == ClientLoader.getPubKey()){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            } else {
+                break;
+            }
+            if (i == 9){
+                throw new EOFException("Can't get packet");
+            }
+        }
+        KeyPair pair = KeyManagerDH.getPair();
+        try {
+            sessionKey = KeyManagerDH.doECDH(KeyManagerDH.savePrivateKey(pair.getPrivate()), KeyManagerDH.hexToByteArray(pubKey));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Thread handleAuth = new Thread(){
+            @Override
+            public void run(){
+                while(true){
+                    try{
+                        DataInputStream dis = new DataInputStream(socket.getInputStream());
+                        if (dis.available() <= 0){
+                            ClientLoader.sleep();
+                            continue;
+                        }
+                        short id = dis.readShort();
+                        if (id != 5){
+                            continue;
+                        }
+                        OPacket packet = PacketManager.getPacket(id);
+                        packet.read(dis);
+                        packet.handle();
+                        break;
+                    }catch (IOException ex){
+                        ex.printStackTrace();
+                    }
+
+                }
+            }
+        };
+        handleAuth.start();
+        String session = sessionKey;
+        sendPacket(new PacketAuthorize(ClientLoader.getNickname()));
+        for (int i = 0; i < 10; i++){
+            if (session == ClientLoader.getSessionKey()){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            } else {
+                break;
+            }
+            if (i == 9){
+                throw new EOFException("Can't get sessionKey");
+            }
+        }
+    }
+
+    public static void handle(){
         Thread handler = new Thread(){
             @Override
             public void run(){
@@ -88,11 +221,6 @@ public class ClientLoader extends Thread  {
         Thread read = new Thread(){
             @Override
             public void run(){
-                if (!sentNickname){
-                    sendPacket(new PacketAuthorize(message));
-                    sentNickname = true;
-                    return;
-                }
                 sendPacket(new PacketMessage(null, message));
             }
         };

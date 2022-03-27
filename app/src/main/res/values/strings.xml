@@ -7,5 +7,6 @@
     <string name="send_empty_message_error">Пустое сообщение</string>
     <string name="connection_closed">Соединение разорвано</string>
     <string name="connection_established">Соединение установлено</string>
+    <string name="session_key_get">Ключ получен</string>
     <string name="connection_not_established">Соединение не установлено</string>
 </resources>
