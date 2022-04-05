@@ -1,9 +1,11 @@
 package com.example.chatchat;
 
 import android.content.Intent;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private static EditText user_chat;
     private static EditText send_mess;
     private static MainActivity mainActivity;
+    private static ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
         button_send = findViewById(R.id.button_send);
         user_chat = findViewById(R.id.user_chat);
         send_mess = findViewById(R.id.send_mess);
+        scrollView = findViewById(R.id.SCROLLER_ID);
         mainActivity = MainActivity.this;
 
+        user_chat.setMovementMethod(new ScrollingMovementMethod());
         ClientLoader.setmA(mainActivity);
 
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!error.equals("")){
                     poppupWindow(R.string.connection_closed);
                 }
+                send_mess.setText("");
             }
         });
 

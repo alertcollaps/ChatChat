@@ -22,21 +22,30 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" android:gravity="center_horizontal"/>
 
-    <EditText
-            android:id="@+id/user_chat"
+    <ScrollView
+            android:id="@+id/SCROLLER_ID"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="400dp"
+            android:scrollbars="vertical"
             android:layout_below="@+id/logo"
-            android:layout_marginTop="10sp"
-            android:inputType="none"
-            android:gravity="start|top"
-            android:backgroundTint="@color/purple_700"
-            android:ems="10"
-            android:layout_marginHorizontal="5sp"
-            android:textColor="@color/purple_200"
-            android:textColorHint="@color/purple_200"
-            android:hint="@string/hint_user_chat" android:singleLine="false" android:maxLines="10"
-            android:editable="false" android:enabled="false"/>
+            app:layout_constraintHeight_percent="0.3"
+            android:fillViewport="true" android:layout_marginTop="0dp">
+
+        <EditText
+                android:id="@+id/user_chat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="10sp"
+                android:inputType="none"
+                android:gravity="start|top"
+                android:backgroundTint="@color/purple_700"
+                android:layout_marginHorizontal="5sp"
+                android:textColor="@color/purple_200"
+                android:textColorHint="@color/purple_200"
+                android:hint="@string/hint_user_chat" android:singleLine="false"
+                android:enabled="false"/>
+    </ScrollView>
     <Button
             android:id="@+id/button_send"
             android:layout_width="match_parent"
