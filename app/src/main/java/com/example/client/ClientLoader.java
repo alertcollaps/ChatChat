@@ -18,10 +18,15 @@ import java.security.KeyPair;
 
 public class ClientLoader extends Thread  {
     private static Socket socket;
-    private static String host = "193.109.79.51";
+    private static String host = "193.109.79.51"; //10.0.2.2;193.109.79.51
     private static int port = 8888;
+    private static boolean sentNickname;
     private static String nickname = "default";
-    private static boolean sentNickname = false;
+    private static String email = "default";
+    private static String password = "default";
+
+
+    private static LoginActivity lA;
     private static MainActivity mA;
     private static String pubKey = "";
     private static String sessionKey = "";
@@ -34,12 +39,25 @@ public class ClientLoader extends Thread  {
         ClientLoader.nickname = nickname;
     }
 
+    public static void setEmail(String email) {
+        ClientLoader.email = email;
+    }
+
+    public static void setPassword(String password) {
+
+        ClientLoader.password = KeyManagerDH.hashSum(password);
+    }
+
     public static String getNickname() {
         return nickname;
     }
 
-    public ClientLoader(MainActivity mA){
-        ClientLoader.mA = mA;
+    public static String getEmail() {
+        return email;
+    }
+
+    public static String getPassword() {
+        return password;
     }
 
     public static void setPubKey(String pubKey) {
@@ -58,8 +76,16 @@ public class ClientLoader extends Thread  {
         return mA;
     }
 
+    public static LoginActivity getLoginActivity(){
+        return lA;
+    }
+
     public static void setmA(MainActivity mA) {
         ClientLoader.mA = mA;
+    }
+
+    public static void setlA(LoginActivity mA) {
+        ClientLoader.lA = mA;
     }
 
     public static void setSessionKey(String sessionKey) {
@@ -79,6 +105,12 @@ public class ClientLoader extends Thread  {
             LoginActivity.keySuccess = true;
         } catch (EOFException e) {
             LoginActivity.keySuccess = false;
+            try {
+                LoginActivity.connectSuccess = false;
+                socket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -166,7 +198,7 @@ public class ClientLoader extends Thread  {
         };
         handleAuth.start();
         String session = sessionKey;
-        sendPacket(new PacketAuthorize(ClientLoader.getNickname()));
+        sendPacket(new PacketAuthorize(getNickname(), getEmail(), getPassword()));
         for (int i = 0; i < 10; i++){
             if (session == ClientLoader.getSessionKey()){
                 try {
@@ -177,7 +209,7 @@ public class ClientLoader extends Thread  {
             } else {
                 break;
             }
-            if (i == 9){
+            if (i >= 9){
                 throw new EOFException("Can't get sessionKey");
             }
         }

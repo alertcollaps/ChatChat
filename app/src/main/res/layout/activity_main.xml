@@ -25,11 +25,11 @@
     <ScrollView
             android:id="@+id/SCROLLER_ID"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="501dp"
             android:scrollbars="vertical"
             android:layout_below="@+id/logo"
-            app:layout_constraintHeight_percent="0.3"
-            android:fillViewport="true" android:layout_marginTop="0dp">
+            android:fillViewport="true" android:layout_marginTop="0dp"
+            android:layout_marginBottom="96dp" android:layout_above="@+id/send_mess">
 
         <EditText
                 android:id="@+id/user_chat"

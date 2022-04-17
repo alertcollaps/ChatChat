@@ -192,4 +192,22 @@ public class KeyManagerDH {
         String encodedKey = Base64.encodeToString(key.getEncoded(), Base64.DEFAULT);
         return encodedKey;
     }
+
+    public static String hashSum(String data){
+        Provider bc = new BouncyCastleProvider();
+
+        Security.addProvider(bc);
+
+        try {
+
+            byte[] text=data.getBytes();
+            MessageDigest md = MessageDigest.getInstance("GOST3411", bc); //второй параметр можно опустить
+            byte[] resultHash = md.digest(text);
+
+            return bytesToHex(resultHash);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }

@@ -1,6 +1,8 @@
 package com.example.chatchat;
 
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         user_chat.setMovementMethod(new ScrollingMovementMethod());
         ClientLoader.setmA(mainActivity);
 
+
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
 
@@ -55,9 +58,31 @@ public class MainActivity extends AppCompatActivity {
                     poppupWindow(R.string.connection_closed);
                 }
                 send_mess.setText("");
+
+
             }
         });
+        user_chat.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int a = scrollView.getScrollY();
+                int c = scrollView.getChildAt(0).getHeight() - scrollView.getHeight();
+                if (a == c){
+                    scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                }
+
+            }
+        });
 
     }
     public void setText(String text){

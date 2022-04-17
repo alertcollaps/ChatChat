@@ -5,9 +5,10 @@ import com.example.client.ClientLoader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.security.Key;
 
 public class PacketAuthorize extends OPacket {
-    private String nickname;
+        private String nickname, email, password;
 
     public PacketAuthorize(){
 
@@ -17,6 +18,12 @@ public class PacketAuthorize extends OPacket {
         this.nickname = nickname;
     }
 
+    public PacketAuthorize(String nickname, String email, String password){
+        this.nickname = nickname;
+        this.email =   email;
+        this.password = password;
+    }
+
     @Override
     public short getId() {
         return 1;
@@ -24,8 +31,14 @@ public class PacketAuthorize extends OPacket {
 
     @Override
     public void write(DataOutputStream dos) throws IOException {
-        nickname = KeyManagerDH.encryptGost(nickname,KeyManagerDH.StringToKey(ClientLoader.getSessionKey()));
+        String key = ClientLoader.getSessionKey();
+        nickname = KeyManagerDH.encryptGost(nickname,KeyManagerDH.StringToKey(key));
+        email = KeyManagerDH.encryptGost(email,KeyManagerDH.StringToKey(key));
+        password = KeyManagerDH.encryptGost(password,KeyManagerDH.StringToKey(key));
+
         dos.writeUTF(nickname);
+        dos.writeUTF(email);
+        dos.writeUTF(password);
     }
 
     @Override

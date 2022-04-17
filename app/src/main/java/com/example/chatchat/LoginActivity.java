@@ -19,18 +19,23 @@ import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
     private static Button button_login;
-    private static EditText text_name;
+    private static EditText text_name, text_email, text_password;
     public static boolean connectSuccess = false;
     public static boolean keySuccess = false;
+    private static LoginActivity loginActivity;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        ClientLoader.setlA(this);
         button_login = findViewById(R.id.login_btn);
         text_name = findViewById(R.id.text_login);
+        text_email = findViewById(R.id.text_email);
+        text_password = findViewById(R.id.text_password);
+
+        loginActivity = LoginActivity.this;
         button_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -38,7 +43,14 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, R.string.send_empty_message_error, Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (text_password.getText().toString().trim().equals("") || text_email.getText().toString().trim().equals("")){
+                    Toast.makeText(LoginActivity.this, R.string.send_empty_message_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 ClientLoader.setNickname(text_name.getText().toString().trim());
+                ClientLoader.setEmail(text_email.getText().toString().trim());
+                ClientLoader.setPassword( text_password.getText().toString().trim());
+
                 if (!connectSuccess) {
                     ClientLoader client = new ClientLoader();
                     client.start();
@@ -116,5 +128,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
         keyCheck.start();
+    }
+    public static void poppupWindow(String message){
+        Toast.makeText(loginActivity, message, Toast.LENGTH_SHORT).show();
     }
 }
