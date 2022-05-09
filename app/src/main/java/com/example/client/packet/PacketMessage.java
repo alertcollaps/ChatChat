@@ -49,7 +49,7 @@ public class PacketMessage extends OPacket{
         ClientLoader.getMainActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ClientLoader.getMainActivity().setText(String.format("[%s]: %s\n", sender, message));
+                ClientLoader.getMainActivity().addElement(sender, message);
             }
         });
     }

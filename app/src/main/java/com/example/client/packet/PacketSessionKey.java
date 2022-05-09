@@ -41,7 +41,7 @@ public class PacketSessionKey extends OPacket{
 
     @Override
     public void handle() {
-        if (!error.equals("NONE")) {
+        if (!error.contains("NONE")) {
 
             ClientLoader.getLoginActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -51,6 +51,13 @@ public class PacketSessionKey extends OPacket{
             });
             return;
         }
+
+        ClientLoader.getLoginActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ClientLoader.getLoginActivity().poppupWindow(error.replace("NONE", ""));
+            }
+        });
 
         ClientLoader.setSessionKey(sessionKey);
         ClientLoader.sendPacket(new PacketLastMessages());

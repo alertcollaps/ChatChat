@@ -18,7 +18,7 @@ import java.security.KeyPair;
 
 public class ClientLoader extends Thread  {
     private static Socket socket;
-    private static String host = "193.109.79.51"; //10.0.2.2;193.109.79.51
+    private static String host = "10.0.2.2"; //10.0.2.2;193.109.79.51
     private static int port = 8888;
     private static boolean sentNickname;
     private static String nickname = "default";

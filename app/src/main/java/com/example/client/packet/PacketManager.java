@@ -15,9 +15,9 @@ public class PacketManager {
         packets.put((short) 1, PacketAuthorize.class);
         packets.put((short) 2, PacketMessage.class);
         packets.put((short) 3, PacketKeys.class);
-        packets.put((short) 4, authPacket.class);
+
         packets.put((short) 5, PacketSessionKey.class);
-        packets.put((short) 6, PacketOK.class);
+
         packets.put((short) 7, PacketLastMessages.class);
     }
 
